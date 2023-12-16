@@ -1,4 +1,5 @@
 use std::{env, fs};
+use std::error::Error;
 use std::process;
 
 fn main() {
@@ -12,10 +13,18 @@ fn main() {
     println!("검색어: {}", config.query);
     println!("대상 파일: {}", config.filename);
 
-    let contents = fs::read_to_string(config.filename)
-        .expect("파일을 읽지 못했습니다.");
+    if let Err(e) = run(config) {
+        println!("애플리케이션 에러: {}", e);
+        process::exit(1);
+    }
+}
+
+fn run(config: Config) -> Result<(), Box<dyn Error>>{
+    let contents = fs::read_to_string(config.filename)?;
 
     println!("파일 내용:\n{}", contents);
+
+    Ok(())
 }
 
 struct Config {
